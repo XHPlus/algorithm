@@ -1,0 +1,268 @@
+\documentclass{article}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{ctex}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{geometry}
+\geometry{a4paper,scale=0.8}
+\lstset { %
+	language=C++,
+	backgroundcolor=\color{black!5}, % set backgroundcolor
+	basicstyle=\footnotesize,% basic font setting
+	breaklines=true,
+}
+\begin{document}
+	\begin{enumerate}
+		\item 作业1\\
+		
+		变量表示
+		\begin{itemize}
+			\item $R_k$为第k个月初的库存剩余量
+			\item $S_k$为第k个月的生产量
+			\item $D_k$为第k个月的需求量
+			\item $W_k$为第k个月的生产成本
+				$$ W_k=\begin{cases}
+				0, &if\ S_k=0\\
+				S_k+3, &otherwise
+				\end{cases}
+				$$
+			\item $C(k, R_k)$为从第k个月开始，且第k个月初库存剩余$R_k$的情况下，到第4个月末的总生产成本
+		\end{itemize}
+
+	
+		状态转移方程为：
+		$$R_{k+1}=R_k + S_k-D_k$$
+		
+		递推公式为：
+		$$C(k, R_k)=\min_{0\leq S_k \leq 6}C(k+1, R_{k+1})+W_k+0.5R_k$$
+		\qquad \qquad\  \ 其中，$R_{k+1}=R_k+S_k-D_k \geq 0$，且$R_5=0, R_1=0$
+		
+		详细计算过程如下：
+		\begin{itemize}
+			\item $k=4$，$R_5=R_4+S_4-D_4=R_4+S_4-4=0$
+				\begin{table}[H]
+					\centering
+					\begin{tabular}{c|c|c|c|c|c|c|c}
+						\hline\hline
+						    & 0 & 1 & 2 & 3 & 4 & 5  & 6 \\ \hline    
+						c(4,0)& & & & & 7& &\\ \hline
+						c(4,1)& & & & 6.5& & &\\ \hline
+						c(4,2)& & & 6& & & &\\ \hline
+						c(4,3)& & 5.5& & & & &\\ \hline
+						c(4,4)& 2& & & & & &\\\hline
+						\hline
+					\end{tabular}
+				\end{table}
+			\item $k=3$, $R_4=R_3+S_3-D_3=R_3+S_3-2$
+				\begin{table}[H]
+					\centering
+					\begin{tabular}{c|c|c|c|c|c|c|c|c|c}
+						\hline\hline
+						& 0 & 1 & 2 & 3 & 4 & 5  & 6 & min & $S$\\ \hline    
+						c(3,0)& & & 12& 12.5& 13& 13.5& 11& 11& 6\\ \hline
+						c(3,1)& & 11.5& 12& 12.5& 13& 10.5& & 10.5& 5\\ \hline
+						c(3,2)& 8& 11.5& 12& 12.5& 10& & & 8&0 \\ \hline
+						c(3,3)& 8& 11.5& 12& 9.5& & & & 8&0 \\ \hline
+						c(3,4)& 8& 11.5& 9& & & & & 8& 0\\ \hline
+						c(3,5)& 8& 8.5& & & & & & 8& 0\\ \hline
+						c(3,6)& 5& & & & & & & 5& 0\\ \hline
+						\hline
+					\end{tabular}
+				\end{table}
+			\item $k=2$, $R_3=R_2+S_2-D_2=R_2+S_2-3, R_2\leq4$
+				\begin{table}[H]
+					\centering
+					\begin{tabular}{c|c|c|c|c|c|c|c|c|c}
+						\hline \hline
+						& 0 & 1 & 2 & 3 & 4 & 5  & 6 & min & $S$\\ \hline    
+						c(2,0)& & & & 17& 17.5& 16& 17& 16& 5\\ \hline
+						c(2,1)& & & 16.5& 17& 15.5& 16.5& 17.5& 15.5& 4\\ \hline
+						c(2,2)& & 16& 16.5& 15& 16& 17& 18& 15& 3\\ \hline
+						c(2,3)& 12.5& 16& 14.5& 15.5& 16.5& 17.5& 15.5& 12.5& 0\\ \hline
+						c(2,4)& 12.5& 14& 15& 16& 17& 15& & 12.5& 0\\ \hline
+						\hline
+					\end{tabular}
+				\end{table}
+			\item $k=1$, $R_2=R_1+S_1-D_1=R_1+S_1-1=S_1-2, S_1\geq 2$
+				\begin{table}[H]
+					\centering
+					\begin{tabular}{c|c|c|c|c|c|c|c|c|c}
+						\hline\hline
+						& 0 & 1 & 2 & 3 & 4 & 5  & 6 & min & $S$\\ \hline    
+						c(1,0)& & & 21& 21.5& 22& 20.5& 21.5& 20.5& 5\\ \hline
+						\hline
+					\end{tabular}
+				\end{table}
+		\end{itemize}
+		
+		所以，最低总成本为20.5，对应1-4月的生产量为5、0、6、0
+		
+		\item 作业2\\
+		
+		变量表示
+		\begin{itemize}
+			\item $d[i][j]$表示从城市$v_i$到城市$v_j$的距离
+			\item $n$表示城市个数
+			\item $S$表示城市节点的集合，$S \subseteq \{v_1,\ldots,v_n\}$
+			\item $D(S, j)$表示从$v_1$出发经过S中所有城市到达$v_j$的最短距离
+		\end{itemize}
+	
+		递推关系式
+		$$D(S, j) = \min_{i\in S, i\neq j}D(S-\{j\}, i)+d[i][j]$$
+		
+		伪代码
+		\begin{algorithm}[H]
+			\centering
+			\caption{计算从$v_1$出发经过其他所有城市仅一次回到$v_1$的最短距离}
+			\begin{flushleft}
+				\textbf{INPUT:} 所有城市之间的距离表$d$\\
+				\textbf{OUTPUT:} $D[2^n][n]$记录所有最短距离的中间状态, $choose[2^n][n]$记录最短距离对应的转移决策, $path[n]$记录最短路径
+			\end{flushleft}
+			\begin{algorithmic}
+				\STATE for all $i,j \in [0, n), initial\ D[i][j]\ to\ -1$
+				\STATE $D[1][0] \gets 0$
+				\FOR{$s=1\to 2^n-1$}
+					\FOR{$i=0\to n-1$}
+						\IF{$D[s][i]=-1$}
+						\STATE continue
+						\ENDIF
+						
+						\FOR{$j=1\to n-1$}
+						\IF{$s \land (2^j) \neq 0$}
+						\STATE continue
+						\ENDIF
+						\STATE $s_{new}=s\lor (2^j)$
+						\IF {$D[s_{new}][j]=-1 \lor D[s_{new}][j]>D[s][i]+d[i][j]$}
+						\STATE $D[s_{new}][j]= D[s][i]+d[i][j]$
+						\STATE $choose[s_{new}][j]=i$
+						\ENDIF
+						\ENDFOR
+					\ENDFOR
+				\ENDFOR
+				\STATE $result \gets \infty$
+				\STATE $last=-1$
+				\FOR{$i=1\to n-1$}
+				\IF{$D[2^n-1][i]>0$}
+				\IF{$result>D[2^n-1][i]+d[i][0]$}
+				\STATE $result=D[2^n-1][i]+d[i][0]$
+				\STATE $last=i$
+				\ENDIF
+				\ENDIF
+				\ENDFOR
+				\STATE $path[n-1]=last$
+				\STATE $S=2^n-1$
+				\FOR{$i=n-1\to 1$}
+				\IF{$S\leq0$}
+				\STATE break
+				\ENDIF
+				\STATE {$path[i-1]=choose[S][path[i]]$}
+				\STATE {$S=S-2^{path[i]}$}
+				\ENDFOR
+				
+				\STATE return result, path
+			\end{algorithmic}
+		
+		\end{algorithm}
+	
+
+		
+		时间复杂度分析：\\
+		根据上述伪代码可以看出，城市集合有$2^n$种可能，对于每个城市集合，最大需要$n^2$，故复杂度为$O(n^22^n)$
+		
+		
+
+
+c++代码：
+\begin{lstlisting}
+#include <iostream>
+#include <limits.h>
+
+using namespace std;
+// number of cities
+#define N  6
+#define N_S (1<<N)
+
+void tsp(int d[][N])
+{
+	int D[N_S][N];
+	int choose[N_S][N];
+	
+	// initialize D
+	for (int i = 0; i < N_S; i++) {
+		for (int j = 0; j < N; j++) {
+			D[i][j] = -1;
+		}
+	}
+	//put v1 to S
+	D[1][0] = 0;
+	for (int s = 1; s < N_S; s++) {
+		for (int i = 0; i < N; i++) {
+			// i not in S
+			if (D[s][i] == -1)
+				continue;
+			// path from i to j
+			for (int j = 1; j < N; j++) {
+				// j in S
+				if ((s & (1<<j)) != 0)
+					continue;
+				int s_new = s | (1<<j);
+				if (D[s_new][j] == -1 || D[s_new][j] >= D[s][i] + d[i][j]) {
+					D[s_new][j] = D[s][i] + d[i][j];
+					choose[s_new][j] = i;
+				}
+			}
+		}
+	}
+	
+	// from last city to v1
+	int shortest_dis = INT_MAX;
+	int last_city = -1;
+	for (int i = 1; i < N; i++) {
+		if (D[N_S-1][i] > 0) {
+			if (D[N_S-1][i] + d[i][0] < shortest_dis) {
+				shortest_dis = D[N_S-1][i] + d[i][0];
+				last_city = i;
+			}
+		}
+	}
+
+	// recover path
+	int path[N];
+	path[N-1] = last_city;
+	for (int i = N-1, s=N_S-1; i > 0 && s > 0; i--) {
+		path[i-1] = choose[s][path[i]];
+		s = s - (1<<path[i]);
+	}
+
+	// print path and shortest path
+	cout << "Path:";
+	for (int i = 0; i < N; i++) {
+		cout << path[i]+1 << "->";
+	}
+	cout << "1" << endl;
+	cout << "Distance:" << shortest_dis << endl;
+}
+
+int main()
+{
+	int d[N][N] = {0,  10, 20, 30, 40, 50,
+		       12,  0, 18, 30, 25, 21,
+		       23, 19,  0,  5, 10, 15,
+		       34, 32,  4,  0,  8, 16,
+		       45, 27, 11, 10,  0, 18,
+		       56, 22, 16, 20, 12, 0};
+	
+	// dp solve tsp
+	tsp(d);
+	return 0;
+}
+
+\end{lstlisting}
+
+运行代码得：最短路径为1$\rightarrow$2$\rightarrow$6$\rightarrow$5$\rightarrow$4$\rightarrow$3$\rightarrow$1
+	，对应的最短距离为：80
+	\end{enumerate}
+\end{document}
