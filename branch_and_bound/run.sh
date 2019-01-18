@@ -8,4 +8,5 @@ do
     t=`./a.out | grep time | sed -n 's/Total time:\t//p' |sed -n 's/ ms//p'`
     time=`echo "scale=3; $time + $t" | bc`
 done
-echo "scale=6; $time / $repeat" | bc
+time=`echo "scale=6; $time / $repeat" | bc`
+echo $time" ms"
