@@ -7,6 +7,7 @@
 #include <string.h>
 #include <vector>
 #include <algorithm>
+#include "timer.h"
 
 #define MAX_NODE_NUM 50
 #define INT_MAX_VALUE 9999
@@ -176,12 +177,10 @@ int main()
     char cost_file[] = "m2.txt";
     parse_input(distance_file, distance_matrix);
     parse_input(cost_file, cost_matrix);
-    // 用dijkstra算法找出在没有其余条件限制下，各节点到B的最短路径
+    TI(time);
+    // 用dijkstra算法找出在没有其余条件限制下，各节点到B的最短路径最小费用
     for (int i = 0; i < MAX_NODE_NUM - 1; i++) {
         dijkstra(distance_matrix, i, shortest_distance[i], shortest_path[i]);
-    }
-    // 用dijkstra算法找出在没有其余条件限制下，各节点到B的最小费用
-    for (int i = 0; i < MAX_NODE_NUM - 1; i++) {
         dijkstra(cost_matrix, i, min_cost[i], min_cost_path[i]);
     }
 
@@ -192,6 +191,7 @@ int main()
     sequence.push_back(0);
     int current_shortest_dist = INT_MAX_VALUE;
     search(sequence, remove, 0, 0, current_shortest_dist, current_shortest_path, shortest_path, shortest_distance, min_cost, distance_matrix, cost_matrix);
+    TO(time, "Total");
     print_result(current_shortest_dist, current_shortest_path, cost_matrix);
 
     return 0;
